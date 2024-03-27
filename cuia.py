@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import time
+import os
 
 def popup(titulo, imagen):
     cv2.imshow(titulo, imagen)
