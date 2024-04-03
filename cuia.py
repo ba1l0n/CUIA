@@ -184,3 +184,17 @@ def alphaBlending(fg, bg, x=0, y=0):
     res[:, :, 3] = np.uint8(a0[:, :, 0] * 255.0)
 
     return res
+
+def proyeccion(puntos, rvec, tvec, cameraMatrix, distCoeffs):
+    if isinstance(puntos, list):
+        return(proyeccion(np.array(puntos, dtype=np.float32), rvec, tvec, cameraMatrix, distCoeffs))
+    if isinstance(puntos, np.ndarray):
+        if puntos.ndim == 1 and puntos.size == 3:
+            res, _ = cv2.projectPoints(puntos.astype(np.float32), rvec, tvec, cameraMatrix, distCoeffs)
+            return(res[0][0].astype(int))
+        if puntos.ndim > 1:
+            aux = proyeccion(puntos[0], rvec, tvec, cameraMatrix, distCoeffs)
+            aux = np.expand_dims(aux, axis=0)
+            for p in puntos[1:]:
+                aux = np.append(aux, [proyeccion(p, rvec, tvec, cameraMatrix, distCoeffs)], axis=0)
+            return(np.array(aux))
