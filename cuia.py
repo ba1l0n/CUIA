@@ -102,7 +102,7 @@ class myVideo:
 
                 ret, frame = self._cap.read()
                 if ret:
-                    self._currentFrame = frame
+                    self._currentFrame = framecv2.cvtColor(fg, cv2.COLOR_GRAY2BGRA)
                     self._nextFrame = correctFrame + 1
                     if self.loop:
                         self._nextFrame = self._nextFrame % self._numFrames
