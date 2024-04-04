@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 import time
 import os
@@ -14,20 +15,31 @@ def popup(titulo, imagen):
             break
 
 def plot(image):
+    dpi = mpl.rcParams['figure.dpi']
     if len(image.shape)==2:
         h, w = image.shape
         c = 1
     else:
         h, w, c = image.shape
-    px = 1/plt.rcParams['figure.dpi']  # pixel in inches
-    plt.subplots(figsize=(h*px, w*px), layout='tight')
-    plt.axis('off')
+
+    # What size does the figure need to be in inches to fit the image?
+    figsize = w / float(dpi), h / float(dpi)
+
+    # Create a figure of the right size with one axes that takes up the full figure
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_axes([0, 0, 1, 1])
+
+    # Hide spines, ticks, etc.
+    ax.axis('off')
+
+    # Display the image.
     if c==4:
         plt.imshow( cv2.cvtColor(image, cv2.COLOR_BGRA2RGBA) )
     elif c==1:
         plt.imshow( image, cmap='gray' )
     else:
-        plt.imshow( cv2.cvtColor(image, cv2.COLOR_BGR2RGB) )
+        plt.imshow( cv2.cvtColor(image, cv2.COLOR_BGR2RGB) , aspect='equal')
+
 
 def bestBackend(camid):
     backends = cv2.videoio_registry.getCameraBackends()
