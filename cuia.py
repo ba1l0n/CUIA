@@ -213,3 +213,25 @@ def proyeccion(puntos, rvec, tvec, cameraMatrix, distCoeffs):
             for p in puntos[1:]:
                 aux = np.append(aux, [proyeccion(p, rvec, tvec, cameraMatrix, distCoeffs)], axis=0)
             return(np.array(aux))
+
+def histogramahsv(imagen, solotono=True):
+    if solotono:
+        hist, (ax1) = plt.subplots(1)
+    else:
+        hist, (ax1, ax2, ax3) = plt.subplots(1,3)
+    framehsv = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(framehsv)
+    histoh = cv2.calcHist( [framehsv], [0], None, [180], [0, 180])
+    ax1.set_title("Hue")
+    ax1.get_yaxis().set_visible(False)
+    ax1.plot(histoh)
+    if not solotono:
+        histos = cv2.calcHist( [framehsv], [1], None, [256], [0, 256])
+        ax2.set_title("Sat")
+        ax2.get_yaxis().set_visible(False)
+        ax2.plot(histos)
+        histov = cv2.calcHist( [framehsv], [2], None, [256], [0, 256])
+        ax3.set_title("Val")
+        ax3.get_yaxis().set_visible(False)
+        ax3.plot(histov)
+    plt.show()
