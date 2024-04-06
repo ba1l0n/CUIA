@@ -14,7 +14,7 @@ def popup(titulo, imagen):
         elif cv2.getWindowProperty(titulo, cv2.WND_PROP_VISIBLE) < 1:
             break
 
-def plot(image, titulo=None):
+def plot(image, titulo=None, axis=False):
     dpi = mpl.rcParams['figure.dpi']
     if len(image.shape)==2:
         h, w = image.shape
@@ -30,7 +30,8 @@ def plot(image, titulo=None):
     ax = fig.add_axes([0, 0, 1, 1])
 
     # Hide spines, ticks, etc.
-    ax.axis('off')
+    if not axis:
+        ax.axis('off')
     if isinstance(titulo, str):
         plt.title(titulo)
     
