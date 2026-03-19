@@ -398,14 +398,14 @@ except:
     print("Instalar con    pip install pygfx pylinalg")
 
 try:
-    from wgpu.gui.offscreen import WgpuCanvas # Para el render offscreen
+    from rendercanvas.offscreen import RenderCanvas # Para el render offscreen
     class escenaPYGFX:
         def __init__(self, fov, ancho, alto):
             self.mixer = gfx.AnimationMixer()
             self.clock = gfx.Clock()
             self.scene = gfx.Scene()
             self.scene.background = None  # Fondo transparente    
-            self.canvas = WgpuCanvas(size=(ancho, alto))
+            self.canvas = RenderCanvas(size=(ancho, alto))
             self.renderer = gfx.WgpuRenderer(self.canvas)
             self.camera = gfx.PerspectiveCamera(fov, aspect=ancho/alto, width=ancho, height=alto, depth_range=(0.1, 1000))
     
@@ -449,4 +449,4 @@ try:
             return np.array(self.canvas.draw())
 except:
     print("Omitiendo dependencias del módulo wgpu.gui.offscreen")
-    print("Instalar con    pip install glfw wgpu gltflib imageio")
+    print("Instalar con    pip install wgpu rendercanvas")
