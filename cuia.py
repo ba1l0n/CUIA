@@ -59,6 +59,30 @@ def bestBackend(camid):
             cam.release()
     return bestCap
 
+
+def importarCamara():
+    try:
+        import camara
+        cameraMatrix = camara.cameraMatrix
+        distCoeffs = camara.distCoeffs
+    except ImportError:
+        import cuia
+        #Declaramos la cámara que usaremos
+        cam = 0
+        #Seleccionamos el mejor backend
+        bk = cuia.bestBackend(cam)
+        # Como la cámara no estaba calibrada suponemos que no presenta distorsiones
+        webcam = cv2.VideoCapture(cam,bk)
+        ancho = int(webcam.get(cv2.CAP_PROP_FRAME_WIDTH))
+        alto = int(webcam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        webcam.release()
+        cameraMatrix = np.array([[ 1000,    0, ancho/2],
+                                 [    0, 1000,  alto/2],
+                                 [    0,    0,       1]])
+        distCoeffs = np.zeros((5, 1)) 
+    return(cameraMatrix, distCoeffs)
+
+    
 class myVideo:
     def __init__(self, source, backend=cv2.CAP_ANY):
         self.loop = False      #Para indicar si el video reiniciará al terminar
