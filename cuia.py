@@ -44,19 +44,27 @@ def plot(image, titulo=None, axis=False):
         plt.imshow( cv2.cvtColor(image, cv2.COLOR_BGR2RGB) , aspect='equal')
 
 
-def bestBackend(camid):
-    backends = cv2.videoio_registry.getCameraBackends()
+def bestBackend(camid, log=False):
+    backends = cv2.videoio_registry.getCameraBackends();
     bestCap = 0
     bestTime = 999
     for b in backends:
-        start = time.time()
-        cam = cv2.VideoCapture(camid, b)
-        end = time.time()
-        if cam.isOpened():
-            if end-start < bestTime:
-                bestTime = end-start
-                bestCap = b
-            cam.release()
+        if b != 2600: # El backend 2600 generalmente no se puede iniciar identificando la cámara por id
+            start = time.time()
+            cam = cv2.VideoCapture(camid, b);
+            end = time.time()
+            if cam.isOpened():
+                if log:
+                    print(f'cv2.CAP_{cv2.videoio_registry.getBackendName(b):s} inició en {end-start:.2f} segundos')
+                if end-start < bestTime:
+                    bestTime = end-start
+                    bestCap = b
+            try:
+                cam.release();
+            except:
+                print("NO")
+    if log:
+        print(f'Seleccionado el BackEnd cv2.CAP_{cv2.videoio_registry.getBackendName(bestCap):s}')
     return bestCap
 
 
