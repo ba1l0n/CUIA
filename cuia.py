@@ -89,6 +89,8 @@ class myVideo:
     def __init__(self, source, backend=cv2.CAP_ANY):
         self.loop = False      #Para indicar si el video reiniciará al terminar
         self.process = None    #Para indicar la función opcional de procesado de frames
+        self.fps = 0           #Indica si se mostrarán los FPS (0=no, 1=arriba/izquierda, 2=abajo/izquierda, 3=arriba/derecha, 4=abajo/derecha)
+        self._prevFrameTime = [0] * 20 #Indica el momento en que se mostraron los anteriores 20 frames (para el cálculo de FPS)
         if isinstance(source, str):
             if os.path.exists(source):
                 self._cap = cv2.VideoCapture(source)
@@ -120,6 +122,19 @@ class myVideo:
             ret, frame = self._cap.read()
             if ret and self.process != None:
                 frame = self.process(frame)
+            if self.fps > 0:
+                now = time.time()
+                if self._prevFrameTime[0] != 0:
+                    fps = int(20.0 / (now - self._prevFrameTime[0]))
+                    if self.fps == 1:
+                        cv2.putText(frame, f'FPS: {fps}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    elif self.fps == 2:
+                        cv2.putText(frame, f'FPS: {fps}', (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    elif self.fps == 3:
+                        cv2.putText(frame, f'FPS: {fps}', (frame.shape[1] - 150, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    elif self.fps == 4:
+                        cv2.putText(frame, f'FPS: {fps}', (frame.shape[1] - 150, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                self._prevFrameTime = self._prevFrameTime[1:] + [now]
             return(ret, frame)
         else:
             nextFrameStart = self._startTime + self._nextFrame / self._fps
